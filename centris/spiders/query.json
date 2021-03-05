@@ -1,0 +1,51 @@
+{
+    "query": {
+        "UseGeographyShapes": 0,
+        "Filters": [
+            {
+                "MatchType": "CityDistrictAll",
+                "Text": "Montréal (All boroughs)",
+                "Id": 5
+            }
+        ],
+        "FieldsValues": [
+            {
+                "fieldId": "CityDistrictAll",
+                "value": 5,
+                "fieldConditionId": "",
+                "valueConditionId": ""
+            },
+            {
+                "fieldId": "Category",
+                "value": "Residential",
+                "fieldConditionId": "",
+                "valueConditionId": ""
+            },
+            {
+                "fieldId": "SellingType",
+                "value": "Rent",
+                "fieldConditionId": "",
+                "valueConditionId": ""
+            },
+            {
+                "fieldId": "LandArea",
+                "value": "SquareFeet",
+                "fieldConditionId": "IsLandArea",
+                "valueConditionId": ""
+            },
+            {
+                "fieldId": "RentPrice",
+                "value": 0,
+                "fieldConditionId": "ForRent",
+                "valueConditionId": ""
+            },
+            {
+                "fieldId": "RentPrice",
+                "value": 1500,
+                "fieldConditionId": "ForRent",
+                "valueConditionId": ""
+            }
+        ]
+    },
+    "isHomePage": true
+}

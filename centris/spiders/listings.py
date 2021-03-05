@@ -6,7 +6,7 @@ import json
 class ListingsSpider(scrapy.Spider):
     name = 'listings'
     allowed_domains = ['www.centris.ca']
-    position = {"startPosition":0}
+    position = {"startPosition": 0}
     query = {
         "query": {
             "UseGeographyShapes": 0,
@@ -96,20 +96,23 @@ class ListingsSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        page = json.loads(response.body)
-        page = page.get('d').get('Result').get('html')
+        page_dict = json.loads(response.body)
+        page = page_dict.get('d').get('Result').get('html')
 
-        sel = Selector( text= page)
-        
+        sel = Selector(text=page)
+
         posts = sel.xpath("//div[@class='shell']")
         print(posts[0].get())
-        
+
         for post in posts:
-            category = post.xpath("normalize-space(.//span[@class='category']/div/text())").get()
-            address = ' '.join(post.xpath(".//span[@class='address']/child::node()/text()").getall())
+            category = post.xpath(
+                "normalize-space(.//span[@class='category']/div/text())").get()
+            address = ' '.join(post.xpath(
+                ".//span[@class='address']/child::node()/text()").getall())
             features = f"""{post.xpath(".//div[@class='cac']/text()").get()} bed {post.xpath(".//div[@class='sdb']/text()").get()} bath"""
             price = post.xpath(".//span[@itemprop='price']/text()").get()
-            url = response.urljoin(post.xpath(".//a[@class='a-more-detail']/@href").get())
+            url = response.urljoin(post.xpath(
+                ".//a[@class='a-more-detail']/@href").get())
 
             yield {
                 'category': category,
@@ -118,3 +121,19 @@ class ListingsSpider(scrapy.Spider):
                 'features': features,
                 'url': url
             }
+
+        count = page_dict.get('d').get('Result').get('count')
+        increment_number = page_dict.get('d').get(
+            'Result').get('inscNumberPerPage')
+
+        if self.position.get('startPosition') <= count:
+            self.position['startPosition'] += increment_number
+            yield scrapy.Request(
+                url="https://www.centris.ca/Property/GetInscriptions",
+                method="POST",
+                body=json.dumps(self.position),
+                headers={
+                    'Content-Type': 'application/json'
+                },
+                callback=self.parse
+            )
